@@ -15,11 +15,17 @@ namespace DeepReadonly {
     readonly y: "hey";
   };
 
-  type DeepReadonly<T> = T extends {}
+  type DeepReadonly1<T> = T extends {}
     ? {
         +readonly [key in keyof T]: DeepReadonly<T[key]>;
       }
     : never;
+
+  type DeepReadonly<T> = {
+    +readonly [key in keyof T]: T[key] extends Record<string, unknown>
+      ? DeepReadonly<T[key]>
+      : T[key];
+  };
 
   let todo: DeepReadonly<X>; // should be same as `Expected`
 }
